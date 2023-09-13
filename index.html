@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Image Upload and Crop</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css">
+</head>
+<body>
+
+    <h1> Upload image to crop</h1>
+ <h3>Ritesh Gaur: Sep3, 2023</h3>
+    <form action="upload.php" method="POST" enctype="multipart/form-data">
+        <input type="file" name="image" id="imageInput" accept="image/*" required>
+        <input type="submit" value="Upload and Crop">
+    </form>
+
+    <!-- This is the modal for cropping -->
+    <div id="cropModal" style="display: none;">
+        <div id="cropContainer">
+            <img src="" id="cropImage" alt="Croppable Image">
+        </div>
+        <button id="cropButton">Crop Image</button>
+    </div>
+
+    <script>
+        let cropper = null;
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const imageInput = document.getElementById('imageInput');
+
+            imageInput.addEventListener('change', function () {
+                const file = imageInput.files[0];
+
+                if (file) {
+                    // Create a pop-up window for cropping
+                    const cropModal = document.getElementById('cropModal');
+                    const cropImage = document.getElementById('cropImage');
+                    const cropButton = document.getElementById('cropButton');
+
+                    // Display the modal
+                    cropModal.style.display = 'block';
+
+                    // Set the image source to the selected file
+                    cropImage.src = URL.createObjectURL(file);
+
+                    // Initialize Cropper.js on the pop-up image
+                    cropper = new Cropper(cropImage, {
+                        aspectRatio: 1, // Set the aspect ratio to 1:1 (square)
+                        viewMode: 2,   // Set the view mode to display the cropped area only
+                        cropBoxResizable: true, // Allow resizing the crop box
+                    });
+
+                    // Handle the crop button click
+                    cropButton.addEventListener('click', function () {
+                        // Get the cropped data URL
+                        const croppedDataURL = cropper.getCroppedCanvas().toDataURL();
+
+                        // Do something with the cropped data, like displaying it on the main page
+                        const mainImage = document.createElement('img');
+                        mainImage.src = croppedDataURL;
+                        document.body.appendChild(mainImage);
+
+                        // Close the modal
+                        cropModal.style.display = 'none';
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
